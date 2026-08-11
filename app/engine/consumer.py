@@ -54,7 +54,7 @@ async def consume_loop():
                 continue
             try:
                 log_data = json.loads(msg.value.decode("utf-8"))
-                process_log_event(log_data)
+                await process_log_event(log_data)
             except json.JSONDecodeError:
                 logger.error("Failed to decode Kafka message as JSON")
             except Exception as e:

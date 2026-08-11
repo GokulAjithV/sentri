@@ -13,8 +13,8 @@ async def send_mock_error():
             "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "service_name": "crease-scoring-service",
             "severity": "ERROR",
-            "message": "Simulated database connection failure",
-            "trace_id": "test-trace-123",
+            "message": "Simulated database connection failure (Test 2)",
+            "trace_id": "test-trace-124",
             "owner": "team-crease-backend"
         }
         # Wrap it in _source to match what OpenSearch/Logstash provides

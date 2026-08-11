@@ -2,6 +2,8 @@ import logging
 from datetime import datetime, timedelta, timezone
 from app.engine.models import LogEvent
 from app.core.config import settings
+from app.notify.links import generate_magic_link
+from app.notify.slack import dispatch_slack_alert
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +50,7 @@ def route_incident(log: LogEvent) -> str:
     }
     return mappings.get(log.service_name, "team-general")
 
-def process_log_event(log_data: dict):
+async def process_log_event(log_data: dict):
     """Process a single log event through the triage pipeline."""
     try:
         payload = log_data.get("_source", log_data)
@@ -68,4 +70,6 @@ def process_log_event(log_data: dict):
     team = route_incident(log)
     logger.info(f"New actionable incident detected! Routing to {team}: {log.message}")
     
-    # TODO: Generate magic link and trigger Notify Service
+    # Generate magic link and trigger Notify Service
+    magic_link = generate_magic_link(log)
+    await dispatch_slack_alert(team, log, magic_link)
