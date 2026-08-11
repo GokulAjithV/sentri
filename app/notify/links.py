@@ -23,5 +23,5 @@ def generate_magic_link(log: LogEvent) -> str:
     token = jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
     
     # Base URL for the Chat UI
-    base_url = "http://localhost:3000/chat"
+    base_url = settings.CHAT_UI_BASE_URL
     return f"{base_url}?token={token}"

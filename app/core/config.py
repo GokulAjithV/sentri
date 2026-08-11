@@ -23,7 +23,8 @@ class Settings(BaseSettings):
     SLACK_WEBHOOK_URL: Optional[str] = None
     DEDUP_WINDOW_MINUTES: int = 15
     MAGIC_LINK_EXPIRY_HOURS: int = 1
-    JWT_SECRET: str = "super_secret_local_dev_key"
+    JWT_SECRET: str
+    CHAT_UI_BASE_URL: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
