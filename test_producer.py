@@ -1,0 +1,30 @@
+import asyncio
+import json
+from datetime import datetime
+from aiokafka import AIOKafkaProducer
+
+async def send_mock_error():
+    producer = AIOKafkaProducer(
+        bootstrap_servers='localhost:9092'
+    )
+    await producer.start()
+    try:
+        mock_log = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "service_name": "crease-scoring-service",
+            "severity": "ERROR",
+            "message": "Simulated database connection failure",
+            "trace_id": "test-trace-123",
+            "owner": "team-crease-backend"
+        }
+        # Wrap it in _source to match what OpenSearch/Logstash provides
+        payload = {"_source": mock_log}
+        
+        await producer.send_and_wait("crease-logs", json.dumps(payload).encode("utf-8"))
+        print(f"Sent mock ERROR event: {mock_log['message']}")
+        
+    finally:
+        await producer.stop()
+
+if __name__ == "__main__":
+    asyncio.run(send_mock_error())
