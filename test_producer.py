@@ -1,6 +1,6 @@
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from aiokafka import AIOKafkaProducer
 
 async def send_mock_error():
@@ -10,7 +10,7 @@ async def send_mock_error():
     await producer.start()
     try:
         mock_log = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "service_name": "crease-scoring-service",
             "severity": "ERROR",
             "message": "Simulated database connection failure",
