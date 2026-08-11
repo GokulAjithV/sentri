@@ -51,7 +51,8 @@ def route_incident(log: LogEvent) -> str:
 def process_log_event(log_data: dict):
     """Process a single log event through the triage pipeline."""
     try:
-        log = LogEvent(**log_data)
+        payload = log_data.get("_source", log_data)
+        log = LogEvent(**payload)
     except Exception as e:
         logger.error(f"Failed to parse log event: {e}")
         return
