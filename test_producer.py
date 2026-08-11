@@ -13,7 +13,7 @@ async def send_mock_error():
             "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "service_name": "crease-scoring-service",
             "severity": "ERROR",
-            "message": "Simulated database connection failure (Test 2)",
+            "message": "Simulated database connection failure (Test 3)",
             "trace_id": "test-trace-124",
             "owner": "team-crease-backend"
         }

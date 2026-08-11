@@ -7,17 +7,17 @@ class Settings(BaseSettings):
     KAFKA_TOPIC: str
     
     # OpenSearch
-    OPENSEARCH_ENDPOINT: str
-    OPENSEARCH_USERNAME: str
-    OPENSEARCH_PASSWORD: str
+    OPENSEARCH_ENDPOINT: Optional[str] = None
+    OPENSEARCH_USERNAME: Optional[str] = None
+    OPENSEARCH_PASSWORD: Optional[str] = None
     
     # LLM
     LLM_PROVIDER: str = "gemini"
-    LLM_API_KEY: str
+    LLM_API_KEY: Optional[str] = None
     
     # GitHub
-    GITHUB_TOKEN: str
-    GITHUB_REPO_URL: str
+    GITHUB_TOKEN: Optional[str] = None
+    GITHUB_REPO_URL: Optional[str] = None
     
     # Notifications & Routing
     SLACK_WEBHOOK_URL: Optional[str] = None
