@@ -58,11 +58,11 @@ def process_log_event(log_data: dict):
         return
 
     if not is_severity_actionable(log.severity):
-        logger.debug(f"Discarding non-actionable log ({log.severity}): {log.message}")
+        logger.info(f"Discarding non-actionable log ({log.severity}): {log.message}")
         return
 
     if is_duplicate(log):
-        logger.debug(f"Suppressing duplicate log: {log.message}")
+        logger.info(f"Suppressing duplicate log: {log.message}")
         return
 
     team = route_incident(log)
