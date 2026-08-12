@@ -13,7 +13,7 @@ _dedup_cache = {}
 
 def is_severity_actionable(severity: str) -> bool:
     """Filter to act only on ERROR or WARN."""
-    return severity.upper() in ["ERROR", "WARN"]
+    return severity.upper() in ["ERR", "ERROR", "WARN", "WARNING"]
 
 def is_duplicate(log: LogEvent) -> bool:
     """Check if this is a duplicate event within the dedup window."""
