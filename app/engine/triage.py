@@ -45,7 +45,7 @@ def route_incident(log: LogEvent) -> str:
         return log.owner
     # Fallback mappings
     mappings = {
-        "crease-scoring-service": "team-crease-backend",
+        "crease-brain": "team-crease-backend",
         "crease-lens": "team-crease-frontend"
     }
     return mappings.get(log.service_name, "team-general")
