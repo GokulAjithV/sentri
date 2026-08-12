@@ -1,9 +1,11 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import logging
 
 from app.engine.consumer import start_consumer, stop_consumer
 from app.core.config import settings
+from app.api.chat import router as chat_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -13,6 +15,16 @@ app = FastAPI(
     description="AI-Powered Log Triage & Root Cause Analysis Platform",
     version="1.0.0"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(chat_router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
@@ -37,3 +49,8 @@ async def shutdown_event():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+if __name__ == "__main__":
+    import uvicorn
+    # Permanently configure the port to 8001 when run via `python -m app.main`
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
