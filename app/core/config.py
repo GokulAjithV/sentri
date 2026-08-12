@@ -10,9 +10,11 @@ class Settings(BaseSettings):
     OPENSEARCH_ENDPOINT: Optional[str] = None
     OPENSEARCH_USERNAME: Optional[str] = None
     OPENSEARCH_PASSWORD: Optional[str] = None
+    OPENSEARCH_INDEX_PATTERN: str = "logstash-*"
     
     # LLM
     LLM_PROVIDER: str = "gemini"
+    LLM_MODEL_NAME: str = "gemini-2.5-flash"
     LLM_API_KEY: Optional[str] = None
     
     # GitHub
