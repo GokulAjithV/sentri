@@ -182,3 +182,43 @@ flowchart TB
 - The system assumes at-least-once Kafka delivery semantics; exactly-once processing is not a current requirement.
 
 ---
+
+## 8. Setup & Configuration
+
+Sentri is designed to be plug-and-play with your existing infrastructure. 
+
+### Environment Variables
+Configure your instance by setting up the `.env` file in `sentri-core/`. 
+
+Make sure to specify your OpenSearch index pattern properly using `OPENSEARCH_INDEX_PATTERN`. If you use daily/monthly rolling indices (e.g., `app-logs-2026.08`), make sure to include a trailing wildcard!
+
+```env
+# Kafka Configuration
+KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+KAFKA_TOPIC=your-app-logs
+
+# OpenSearch Configuration
+OPENSEARCH_ENDPOINT=https://localhost:9200
+OPENSEARCH_USERNAME=username
+OPENSEARCH_PASSWORD=password
+# IMPORTANT: Set your index name with a proper wildcard if using date-based indices!
+OPENSEARCH_INDEX_PATTERN=your-app-logs-*
+
+# LLM Configuration (BYOK)
+LLM_PROVIDER=gemini
+LLM_MODEL_NAME=gemini-2.5-flash # e.g. gpt-4o, claude-3-5-sonnet-20240620, gemini-2.5-flash
+LLM_API_KEY=your_api_key
+
+# GitHub Configuration (Code-Aware RAG)
+GITHUB_TOKEN=your_github_token
+GITHUB_REPO_URL=https://github.com/your-org/repo-name
+
+# Notification & Core Settings
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+DEDUP_WINDOW_MINUTES=15
+MAGIC_LINK_EXPIRY_HOURS=48
+
+# Security & UI Configuration
+JWT_SECRET=super_secret_local_dev_key
+CHAT_UI_BASE_URL=http://localhost:3001/chat
+```
