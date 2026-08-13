@@ -16,10 +16,11 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "gemini"
     LLM_MODEL_NAME: str = "gemini-2.5-flash"
     LLM_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = None
     
     # GitHub
     GITHUB_TOKEN: Optional[str] = None
-    GITHUB_REPO_URL: Optional[str] = None
+    GITHUB_REPO_URLS: Optional[str] = None # Comma-separated list of repos, e.g., https://github.com/org/repo1,https://github.com/org/repo2
     
     # Notifications & Routing
     SLACK_WEBHOOK_URL: Optional[str] = None
