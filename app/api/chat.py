@@ -28,11 +28,14 @@ async def chat_endpoint(request: ChatRequest, payload: dict = Depends(verify_jwt
     if not service_name:
         raise HTTPException(status_code=400, detail="Invalid token payload")
         
+    from langchain_core.messages import AIMessage
     # Convert dict history to LangChain messages
     messages = []
     for msg in (request.history or []):
         if msg["role"] == "user":
             messages.append(HumanMessage(content=msg["content"]))
+        elif msg["role"] in ["assistant", "ai", "system"]:
+            messages.append(AIMessage(content=msg["content"]))
     
     # Add current message if it's not the INIT signal
     if request.message != "INIT":
