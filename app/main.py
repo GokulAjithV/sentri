@@ -5,7 +5,15 @@ import logging
 
 from app.engine.consumer import start_consumer, stop_consumer
 from app.core.config import settings
+from app.rag.embedder import initialize_codebase_if_empty
 from app.api.chat import router as chat_router
+from app.api.webhook import router as webhook_router
+
+import logging
+
+# Suppress Kafka internal infinite reconnect logging spam
+logging.getLogger("aiokafka").setLevel(logging.CRITICAL)
+logging.getLogger("kafka").setLevel(logging.CRITICAL)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,6 +33,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router, prefix="/api")
+app.include_router(webhook_router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
@@ -40,6 +49,7 @@ async def startup_event():
         logger.warning("[CONFIG] SLACK_WEBHOOK_URL is missing. Alerts will only be logged to the console (Slack Simulation).")
         
     asyncio.create_task(start_consumer())
+    asyncio.create_task(initialize_codebase_if_empty())
 
 @app.on_event("shutdown")
 async def shutdown_event():
