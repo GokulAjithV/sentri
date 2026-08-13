@@ -150,73 +150,88 @@ export function ChatWindow() {
 
   return (
     <div className="chat-container">
-      <header className="chat-header">
-        <h1 className="chat-title">
-          <AlertTriangle className="icon-orange" />
-          Sentri RCA Console
-        </h1>
-      </header>
+      <div className="chat-header">
+        <div className="chat-header-content">
+          <div>
+            <h1 className="chat-title">Incident RCA</h1>
+            <div className="chat-subtitle">Automated root cause analysis and incident context.</div>
+          </div>
+        </div>
+      </div>
 
-      <main className="chat-main">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`message-row ${msg.role === 'user' ? 'message-user' : 'message-assistant'}`}>
-            <div className={`message-bubble ${msg.role === 'user' ? 'bubble-user' : 'bubble-assistant'}`}>
-
-              {/* If it's an RCA response, render the cards */}
-              {msg.rca && (
-                <div className="rca-card-container">
-                  <div className="rca-card">
-                    <h3 className="rca-title title-orange">Root Cause Hypothesis</h3>
-                    <p>{msg.rca.hypothesis}</p>
-                  </div>
-                  <div className="rca-card-row">
-                    <div className="rca-card" style={{ flex: 1 }}>
-                      <h3 className="rca-title title-green">Confidence Score</h3>
-                      <div className="confidence-score">{msg.rca.confidence_score}%</div>
-                    </div>
-                    <div className="rca-card" style={{ flex: 1 }}>
-                      <h3 className="rca-title title-blue">Suggested Fix</h3>
-                      <p>{msg.rca.suggested_fix}</p>
-                    </div>
-                  </div>
+      <div className="chat-history">
+        {messages.length === 0 ? (
+          <div className="empty-state">
+            <AlertTriangle className="empty-icon" size={48} />
+            <h2>RCA Console</h2>
+            <p>Initializing analysis for this incident...</p>
+          </div>
+        ) : (
+          messages.map(msg => (
+            <div key={msg.id} className={`message-wrapper ${msg.role === 'user' ? 'wrapper-user' : 'wrapper-assistant'}`}>
+              <div className={`message ${msg.role === 'user' ? 'message-user' : 'message-assistant'}`}>
+                {msg.role === 'assistant' && (
+                  <div className="message-sender">Sentri</div>
+                )}
+                
+                {/* Regular text content */}
+                <div className="message-content">
+                  {msg.content}
+                  {msg.role === 'assistant' && !msg.content && loading && !msg.rca && (
+                    <span className="typing-indicator">...</span>
+                  )}
                 </div>
-              )}
-
-              {/* Regular markdown/text content */}
-              <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
-
+                
+                {/* RCA Card Rendering */}
+                {msg.rca && (
+                  <div className="rca-card">
+                    <div className="rca-header">
+                      <AlertTriangle size={18} />
+                      Automated RCA Report
+                    </div>
+                    <div className="rca-body">
+                      <div className="rca-section">
+                        <h4>Root Cause Hypothesis</h4>
+                        <p>{msg.rca.hypothesis}</p>
+                      </div>
+                      <div className="rca-section">
+                        <h4>Confidence Score</h4>
+                        <div className="confidence-score">{msg.rca.confidence_score}%</div>
+                      </div>
+                      <div className="rca-section">
+                        <h4>Suggested Fix</h4>
+                        <p>{msg.rca.suggested_fix}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="loading-indicator">
-            <Loader2 className="spin" style={{ height: '1rem', width: '1rem' }} />
-            Sentri is thinking...
-          </div>
+          ))
         )}
         <div ref={messagesEndRef} />
-      </main>
+      </div>
 
-      <footer className="chat-footer">
-        <div className="input-container">
-          <input
-            type="text"
+      <div className="chat-input-container">
+        <div className="chat-input-wrapper">
+          <textarea
+            className="chat-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Ask follow-up questions..."
-            className="chat-input"
             disabled={loading}
+            rows={1}
           />
-          <button
-            onClick={() => sendMessage(input)}
-            disabled={loading || !input.trim()}
+          <button 
             className="send-button"
+            onClick={() => sendMessage(input)}
+            disabled={!input.trim() || loading}
           >
-            <Send style={{ height: '1.25rem', width: '1.25rem' }} />
+            {loading ? <Loader2 className="spinner" size={20} /> : <Send size={20} />}
           </button>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }
