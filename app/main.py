@@ -35,6 +35,17 @@ app.add_middleware(
 app.include_router(chat_router, prefix="/api")
 app.include_router(webhook_router, prefix="/api")
 
+@app.get("/api/config/repos")
+async def get_configured_repos():
+    repos = []
+    if settings.GITHUB_REPO_URLS:
+        for url in settings.GITHUB_REPO_URLS.split(","):
+            url = url.strip()
+            if url:
+                from app.rag.embedder import extract_repo_name
+                repos.append(extract_repo_name(url))
+    return {"repos": repos}
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up Sentri Core...")

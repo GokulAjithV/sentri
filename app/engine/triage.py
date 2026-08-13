@@ -80,4 +80,16 @@ async def process_log_event(log_data: dict):
     
     # Generate magic link and trigger Notify Service
     magic_link = generate_magic_link(log)
-    await dispatch_slack_alert(team, log, magic_link)
+    
+    dispatched = False
+    if settings.SLACK_WEBHOOK_URL:
+        await dispatch_slack_alert(team, log, magic_link)
+        dispatched = True
+        
+    if settings.SMTP_SERVER:
+        from app.notify.email import dispatch_email_alert
+        await dispatch_email_alert(team, log, magic_link)
+        dispatched = True
+        
+    if not dispatched:
+        logger.warning(f"Incident detected but no notification channels are configured. Missing SLACK_WEBHOOK_URL or SMTP_SERVER.")

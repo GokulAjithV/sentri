@@ -82,3 +82,47 @@ async def chat_endpoint(request: ChatRequest, payload: dict = Depends(verify_jwt
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+class ExploreRequest(BaseModel):
+    message: str
+    service_name: str
+    history: Optional[List[Dict[str, str]]] = []
+
+@router.post("/chat/explore")
+async def explore_endpoint(request: ExploreRequest):
+    if not request.service_name:
+        raise HTTPException(status_code=400, detail="service_name is required")
+        
+    from langchain_core.messages import AIMessage, HumanMessage
+    messages = []
+    for msg in (request.history or []):
+        if msg["role"] == "user":
+            messages.append(HumanMessage(content=msg["content"]))
+        elif msg["role"] in ["assistant", "ai", "system"]:
+            messages.append(AIMessage(content=msg["content"]))
+            
+    messages.append(HumanMessage(content=request.message))
+    
+    state: IncidentState = {
+        "service_name": request.service_name,
+        "trace_id": None,
+        "timestamp": None,
+        "messages": messages,
+        "retrieved_logs": None,
+        "rca": None
+    }
+    
+    async def event_generator():
+        try:
+            async for event in graph.astream_events(state, version="v1"):
+                kind = event["event"]
+                if kind == "on_chat_model_stream":
+                    content = event["data"]["chunk"].content
+                    if content:
+                        yield f"data: {json.dumps({'type': 'token', 'content': content})}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            logger.error(f"Error in graph streaming: {e}")
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")

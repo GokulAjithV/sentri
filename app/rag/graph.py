@@ -46,12 +46,19 @@ def retrieve_code_node(state: IncidentState) -> IncidentState:
     """Retrieve code snippets from ChromaDB based on the error log."""
     logger.info(f"Retrieving code for {state['service_name']}")
     logs = state.get("retrieved_logs", [])
-    if not logs:
-        logger.warning("No logs to base code search on.")
-        return {"retrieved_code": []}
+    messages = state.get("messages", [])
     
-    # Use the first log's message as the query
-    query = logs[0].get("message", "")
+    query = ""
+    if logs:
+        # Use the first log's message as the query for incidents
+        query = logs[0].get("message", "")
+    elif messages:
+        # If no logs but we have chat messages (Explore mode), use the latest message
+        query = str(messages[-1].content)
+        
+    if not query:
+        logger.warning("No logs and no messages to base code search on.")
+        return {"retrieved_code": []}
     
     try:
         from app.rag.vector_store import get_vector_store

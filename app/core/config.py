@@ -24,6 +24,15 @@ class Settings(BaseSettings):
     
     # Notifications & Routing
     SLACK_WEBHOOK_URL: Optional[str] = None
+    
+    # SMTP Email Notifier (Optional fallback)
+    SMTP_SERVER: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM_EMAIL: Optional[str] = None
+    ALERT_TO_EMAIL: Optional[str] = None
+    
     DEDUP_WINDOW_MINUTES: int = 15
     MAGIC_LINK_EXPIRY_HOURS: int = 1
     JWT_SECRET: str
