@@ -15,3 +15,5 @@ pyrightconfig.json
 
 # Sentri specific
 *.log
+.chroma_db/
+.model_cache/
