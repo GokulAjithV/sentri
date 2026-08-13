@@ -18,8 +18,16 @@ def is_severity_actionable(severity: str) -> bool:
 def is_duplicate(log: LogEvent) -> bool:
     """Check if this is a duplicate event within the dedup window."""
     now = datetime.now(timezone.utc)
-    # Create a simple signature for the error
-    signature = hash(f"{log.service_name}:{log.message}")
+    import re
+    # Remove dynamic latency like (123.45ms) from the message to prevent false unique signatures
+    clean_message = re.sub(r'\(\d+\.\d+ms\)', '', log.message).strip()
+    
+    # If a stack trace is present, it's the most reliable unique identifier for a bug
+    content_to_hash = log.stack_trace if log.stack_trace else clean_message
+    
+    # Use a stable string instead of Python's randomized hash() across restarts if desired, 
+    # but for in-memory within the same process, hash() is fine.
+    signature = hash(f"{log.service_name}:{content_to_hash}")
     
     if signature in _dedup_cache:
         last_seen = _dedup_cache[signature]
