@@ -8,18 +8,19 @@ from app.engine.triage import process_log_event
 
 logger = logging.getLogger(__name__)
 
-# Global consumer instance
-_consumer: Optional[AIOKafkaConsumer] = None
+# Global consumer task
 _consume_task: Optional[asyncio.Task] = None
+_consumer: Optional[AIOKafkaConsumer] = None
+_is_shutting_down: bool = False
 
 async def start_consumer():
-    global _consumer, _consume_task
-    
+    global _consume_task
     logger.info(f"Connecting to Kafka brokers: {settings.KAFKA_BOOTSTRAP_SERVERS}")
-    
-    # Simple retry loop for Kafka connection
-    max_retries = 5
-    for attempt in range(max_retries):
+    _consume_task = asyncio.create_task(run_consumer_with_reconnect())
+
+async def run_consumer_with_reconnect():
+    global _consumer, _is_shutting_down
+    while not _is_shutting_down:
         try:
             _consumer = AIOKafkaConsumer(
                 settings.KAFKA_TOPIC,
@@ -29,16 +30,21 @@ async def start_consumer():
             )
             await _consumer.start()
             logger.info("Successfully connected to Kafka.")
+            
+            await consume_loop()
+            
+        except asyncio.CancelledError:
+            logger.info("Consumer reconnect loop cancelled.")
             break
         except Exception as e:
-            logger.warning(f"Failed to connect to Kafka (attempt {attempt+1}/{max_retries}): {e}")
-            if attempt < max_retries - 1:
+            if not _is_shutting_down:
+                logger.warning(f"Kafka connection/consumption error: {e}. Retrying in 5 seconds...")
+                if _consumer:
+                    try:
+                        await _consumer.stop()
+                    except Exception:
+                        pass
                 await asyncio.sleep(5)
-            else:
-                logger.error("Could not connect to Kafka after multiple attempts.")
-                return
-
-    _consume_task = asyncio.create_task(consume_loop())
 
 async def consume_loop():
     logger.info("Starting Triage Engine consume loop...")
@@ -61,17 +67,25 @@ async def consume_loop():
                 logger.error(f"Error processing message: {e}")
     except asyncio.CancelledError:
         logger.info("Consume loop cancelled.")
+        raise
     except Exception as e:
         logger.error(f"Unexpected error in consume loop: {e}")
+        raise
 
 async def stop_consumer():
-    global _consumer, _consume_task
+    global _consumer, _consume_task, _is_shutting_down
+    _is_shutting_down = True
+    
     if _consume_task:
         _consume_task.cancel()
         try:
             await _consume_task
         except asyncio.CancelledError:
             pass
+            
     if _consumer:
-        await _consumer.stop()
+        try:
+            await _consumer.stop()
+        except Exception:
+            pass
         logger.info("Kafka consumer stopped.")
