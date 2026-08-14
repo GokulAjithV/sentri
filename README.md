@@ -10,6 +10,8 @@ Sentri is a self-hosted, event-driven triage layer that consumes real-time log e
 
 Sentri does not host log storage, message brokering, or LLM inference — it connects to infrastructure the adopter already runs (BYO Kafka, BYO OpenSearch, BYOK LLM), and ships only its own processing, reasoning, and UI components.
 
+> **🚀 Ready to deploy?** Check out the [SETUP.md](SETUP.md) guide for quick start instructions!
+
 ---
 
 ## 2. Functional Requirements (FR)

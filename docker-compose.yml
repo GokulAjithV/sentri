@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  sentri-core:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentri-core
+    ports:
+      - "8001:8001"
+    volumes:
+      # Persist ChromaDB vector store
+      - ./.chroma_db:/app/.chroma_db
+      # Persist FastEmbed models cache
+      - ./.model_cache:/app/.model_cache
+    env_file:
+      - ./.env
+    restart: unless-stopped
+
+  sentri-client:
+    build:
+      context: ../sentri-client
+      dockerfile: Dockerfile
+    container_name: sentri-client
+    ports:
+      - "3001:80"
+    environment:
+      - VITE_SENTRI_CORE_API_URL=http://localhost:8001
+    depends_on:
+      - sentri-core
+    restart: unless-stopped
