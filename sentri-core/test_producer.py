@@ -12,6 +12,7 @@ async def send_mock_error():
         mock_log = {
             "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "service_name": "test-server",
+            "environment": "staging",
             "severity": "ERROR",
             "message": "Simulated database connection failure (Test 5)",
             "trace_id": "test-trace-124",
