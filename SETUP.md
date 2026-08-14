@@ -30,7 +30,22 @@ Sentri relies heavily on environment variables to connect to your existing infra
    - `SLACK_WEBHOOK_URL` (optional, for alerts)
 
 ## 3. Run the Stack
-Run the `docker-compose` stack from the root directory. It will automatically build and spin up both the backend and frontend.
+
+You can run Sentri using the pre-built images from Docker Hub, or build them locally from source.
+
+### Option A: Use Pre-built Images (Fastest)
+If you don't want to compile the code locally, you can pull the official images directly from Docker Hub:
+
+```bash
+# Run the backend
+docker run -d -p 8001:8001 --name sentri-core --env-file sentri-core/.env gokulajith/sentri-core:latest
+
+# Run the frontend
+docker run -d -p 3001:80 --name sentri-client -e VITE_SENTRI_CORE_API_URL=http://localhost:8001 gokulajith/sentri-client:latest
+```
+
+### Option B: Build Locally
+Run the `docker-compose` stack from the root directory. It will automatically build and spin up both the backend and frontend from the source code.
 
 ```bash
 docker-compose up --build -d

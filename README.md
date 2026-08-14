@@ -10,7 +10,7 @@ Sentri is a self-hosted, event-driven triage layer that consumes real-time log e
 
 Sentri does not host log storage, message brokering, or LLM inference — it connects to infrastructure the adopter already runs (BYO Kafka, BYO OpenSearch, BYOK LLM), and ships only its own processing, reasoning, and UI components.
 
-> **🚀 Ready to deploy?** Check out the [SETUP.md](SETUP.md) guide for quick start instructions!
+> **🚀 Ready to deploy?** Sentri is available as pre-built images on Docker Hub! Check out the [SETUP.md](SETUP.md) guide for quick start instructions.
 
 ---
 
@@ -47,7 +47,7 @@ Sentri does not host log storage, message brokering, or LLM inference — it con
 | NFR-4 | Security | Magic links shall be single-use, JWT-signed, and expire within a configurable window (default 1 hour). |
 | NFR-5 | Security | GitHub access shall use fine-grained, read-only, repo-scoped tokens — never full-account access. |
 | NFR-6 | Security | Secrets (API keys, credentials) shall be injected only as runtime environment variables, never as Docker build arguments or committed files. |
-| NFR-7 | Portability | The owned components shall run identically via Docker Compose on local machines, Railway, Render, or a bare VM — no platform-specific code. |
+| NFR-7 | Portability | The owned components shall run identically via Docker Compose, Docker Hub images on local machines, Railway, Render, or a bare VM — no platform-specific code. |
 | NFR-8 | Cost | The reference deployment shall operate within free-tier limits for Kafka, OpenSearch, LLM API, and vector store for low-traffic workloads. |
 | NFR-9 | Extensibility | Adding a new log severity rule or notification channel shall not require changes to the Kafka ingestion or OpenSearch storage layer. |
 | NFR-10 | Isolation | In multi-service deployments, log and code retrieval shall be strictly scoped by `service_name`, preventing cross-service context leakage in RCA output. |

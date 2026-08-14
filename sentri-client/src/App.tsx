@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChatWindow } from './components/ChatWindow'
 import { ExploreWindow } from './components/ExploreWindow'
 import { LayoutDashboard, MessageSquareText } from 'lucide-react'
