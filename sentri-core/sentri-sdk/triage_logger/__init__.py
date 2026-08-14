@@ -25,7 +25,7 @@ class SentriLogger:
         if self.producer:
             await self.producer.stop()
             
-    async def log(self, service_name: str, severity: str, message: str, owner: str = "unassigned", trace_id: str = None):
+    async def log(self, service_name: str, severity: str, message: str, environment: str = "production", owner: str = "unassigned", trace_id: str = None):
         """
         Send a log event to Sentri.
         """
@@ -40,6 +40,7 @@ class SentriLogger:
             "service_name": service_name,
             "severity": severity,
             "message": message,
+            "environment": environment,
             "trace_id": trace_id,
             "owner": owner
         }

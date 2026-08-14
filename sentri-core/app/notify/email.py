@@ -53,6 +53,7 @@ async def dispatch_email_alert(team: str, log: LogEvent, magic_link: str):
           </div>
           <div style="padding: 24px;">
             <p style="margin-top: 0;"><strong>Service:</strong> {log.service_name}</p>
+            <p><strong>Environment:</strong> {log.environment or 'N/A'}</p>
             <p><strong>Severity:</strong> {log.severity}</p>
             <p><strong>Team:</strong> {team}</p>
             <p><strong>Message:</strong></p>

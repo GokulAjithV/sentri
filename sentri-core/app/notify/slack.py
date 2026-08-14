@@ -26,6 +26,7 @@ async def dispatch_slack_alert(team: str, log: LogEvent, magic_link: str):
                 "type": "section",
                 "fields": [
                     {"type": "mrkdwn", "text": f"*Team:*\n{team}"},
+                    {"type": "mrkdwn", "text": f"*Environment:*\n{log.environment or 'N/A'}"},
                     {"type": "mrkdwn", "text": f"*Trace ID:*\n`{log.trace_id or 'N/A'}`"}
                 ]
             },
