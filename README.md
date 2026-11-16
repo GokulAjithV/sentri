@@ -233,3 +233,7 @@ MAGIC_LINK_EXPIRY_HOURS=48
 JWT_SECRET=super_secret_local_dev_key
 CHAT_UI_BASE_URL=http://localhost:3001/chat
 ```
+
+## Author
+
+**Gokul Ajith V** · [LinkedIn](https://linkedin.com/in/gokulajithv) · [GitHub](https://github.com/GokulAjithV)
