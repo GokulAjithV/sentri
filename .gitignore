@@ -1,2 +1,4 @@
 pyrightconfig.json
 .vscode
+sentri-production-review.md
+docker-compose.prod.yml
