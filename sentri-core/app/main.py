@@ -1,3 +1,4 @@
+from sys import prefix
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
@@ -8,6 +9,7 @@ from app.core.config import settings
 from app.rag.embedder import initialize_codebase_if_empty
 from app.api.chat import router as chat_router
 from app.api.webhook import router as webhook_router
+from app.api.auth import router as auth_router
 
 import logging
 
@@ -58,6 +60,7 @@ app.add_middleware(
 
 app.include_router(chat_router, prefix="/api")
 app.include_router(webhook_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 
 @app.get("/api/config/repos")
 async def get_configured_repos():

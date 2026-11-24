@@ -36,6 +36,8 @@ class Settings(BaseSettings):
     DEDUP_WINDOW_MINUTES: int = 15
     MAGIC_LINK_EXPIRY_HOURS: int = 1
     JWT_SECRET: str
+    EXPLORE_PASSWORD: str
+    EXPLORE_SESSION_EXPIRY_HOURS: int = 12
     CHAT_UI_BASE_URL: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
