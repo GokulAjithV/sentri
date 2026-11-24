@@ -8,6 +8,7 @@ from typing import List, Dict, Any, Optional
 from app.api.auth import verify_jwt_token
 from app.rag.graph import build_graph
 from app.rag.state import IncidentState
+from app.rag.embedder import get_configured_repo_names
 from langchain_core.messages import HumanMessage, BaseMessage
 
 logger = logging.getLogger(__name__)
@@ -90,8 +91,8 @@ class ExploreRequest(BaseModel):
 
 @router.post("/chat/explore")
 async def explore_endpoint(request: ExploreRequest):
-    if not request.service_name:
-        raise HTTPException(status_code=400, detail="service_name is required")
+    if request.service_name not in get_configured_repo_names():
+        raise HTTPException(status_code=400, detail="unknown service_name")
         
     from langchain_core.messages import AIMessage, HumanMessage
     messages = []

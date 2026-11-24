@@ -30,6 +30,11 @@ def extract_repo_name(url: str) -> str:
         return parts[1]
     return path
 
+def get_configured_repo_names() -> list[str]:
+    if not settings.GITHUB_REPO_URLS:
+        return []
+    return [extract_repo_name(u.strip()) for u in settings.GITHUB_REPO_URLS.split(",") if u.strip()]
+
 async def download_github_repo(repo_url: str, token: str, extract_dir: str):
     """Download the repo's default branch zipball and extract it."""
     # Convert https://github.com/org/repo to https://api.github.com/repos/org/repo/zipball
