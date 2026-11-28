@@ -22,12 +22,12 @@ EXPLORE_SUBJECT = "explore-user"
 INCIDENT_SUBJECT = "triage-incident" # must match app/notify/links.py
 
 def require_explore_user(payload: dict = Depends(verify_jwt_token)):
-    if payload["sub"] != EXPLORE_SUBJECT:
+    if payload.get("sub") != EXPLORE_SUBJECT:
         raise HTTPException(status_code=403, detail="This token cannot access 'Explore'")
     return payload
 
 def require_incident_user(payload: dict = Depends(verify_jwt_token)):
-    if payload["sub"] != INCIDENT_SUBJECT:
+    if payload.get("sub") != INCIDENT_SUBJECT:
         raise HTTPException(status_code=403, detail="This token cannot access 'Incident Chat'")
     return payload
 
