@@ -1,6 +1,6 @@
 import time
 import jwt, secrets
-from fastapi import HTTPException, Security, APIRouter
+from fastapi import HTTPException, Security, APIRouter, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.config import settings
 from pydantic import BaseModel
@@ -19,6 +19,17 @@ def verify_jwt_token(credentials: HTTPAuthorizationCredentials = Security(securi
         raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
 EXPLORE_SUBJECT = "explore-user"
+INCIDENT_SUBJECT = "triage-incident" # must match app/notify/links.py
+
+def require_explore_user(payload: dict = Depends(verify_jwt_token)):
+    if payload["sub"] != EXPLORE_SUBJECT:
+        raise HTTPException(status_code=403, detail="This token cannot access 'Explore'")
+    return payload
+
+def require_incident_user(payload: dict = Depends(verify_jwt_token)):
+    if payload["sub"] != INCIDENT_SUBJECT:
+        raise HTTPException(status_code=403, detail="This token cannot access 'Incident Chat'")
+    return payload
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
 from sys import prefix
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import logging
@@ -9,7 +9,7 @@ from app.core.config import settings
 from app.rag.embedder import initialize_codebase_if_empty
 from app.api.chat import router as chat_router
 from app.api.webhook import router as webhook_router
-from app.api.auth import router as auth_router
+from app.api.auth import router as auth_router, require_explore_user
 
 import logging
 
@@ -63,7 +63,7 @@ app.include_router(webhook_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 
 @app.get("/api/config/repos")
-async def get_configured_repos():
+async def get_configured_repos(_: dict = Depends(require_explore_user)):
     repos = []
     if settings.GITHUB_REPO_URLS:
         for url in settings.GITHUB_REPO_URLS.split(","):

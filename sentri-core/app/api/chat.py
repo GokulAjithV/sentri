@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 
-from app.api.auth import verify_jwt_token
+from app.api.auth import require_explore_user, require_incident_user
 from app.rag.graph import build_graph
 from app.rag.state import IncidentState
 from app.rag.embedder import get_configured_repo_names
@@ -21,7 +21,7 @@ class ChatRequest(BaseModel):
     history: Optional[List[Dict[str, str]]] = [] 
     
 @router.post("/chat")
-async def chat_endpoint(request: ChatRequest, payload: dict = Depends(verify_jwt_token)):
+async def chat_endpoint(request: ChatRequest, payload: dict = Depends(require_incident_user)):
     service_name = payload.get("service_name")
     trace_id = payload.get("trace_id")
     timestamp = payload.get("timestamp")
@@ -90,7 +90,7 @@ class ExploreRequest(BaseModel):
     history: Optional[List[Dict[str, str]]] = []
 
 @router.post("/chat/explore")
-async def explore_endpoint(request: ExploreRequest):
+async def explore_endpoint(request: ExploreRequest, _: dict = Depends(require_explore_user)):
     if request.service_name not in get_configured_repo_names():
         raise HTTPException(status_code=400, detail="unknown service_name")
         
